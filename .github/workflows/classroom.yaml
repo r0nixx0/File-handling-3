@@ -1,0 +1,135 @@
+name: Autograding Tests
+
+on:
+  push:
+    paths:
+      - 'assignment.py'
+      - 'test_assignment.py'
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pytest
+        run: pip install -r requirements.txt
+
+      - name: Ex 1 - Read line
+        id: ex1_read_line
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Read line
+          command: pytest test_assignment.py::test1_read_line
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Uses readline
+        id: ex1_uses_readline
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Uses readline
+          command: pytest test_assignment.py::test1_uses_readline
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Reverse lines
+        id: ex2_reverse_lines
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Reverse lines
+          command: pytest test_assignment.py::test2_reverse_lines
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Source unchanged
+        id: ex2_source_unchanged
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Source unchanged
+          command: pytest test_assignment.py::test2_source_unchanged
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 3 - Merge files
+        id: ex3_merge_files
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 3 - Merge files
+          command: pytest test_assignment.py::test3_merge_files
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 3 - Replaces old file
+        id: ex3_replaces_old_destination
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 3 - Replaces old file
+          command: pytest test_assignment.py::test3_replaces_old_destination
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 4 - Find score
+        id: ex4_find_score
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 4 - Find score
+          command: pytest test_assignment.py::test4_find_score
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 4 - Not found
+        id: ex4_not_found
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 4 - Not found
+          command: pytest test_assignment.py::test4_not_found
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 5 - Update score
+        id: ex5_update_score
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 5 - Update score
+          command: pytest test_assignment.py::test5_update_score
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 5 - Name not found
+        id: ex5_name_not_found
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 5 - Name not found
+          command: pytest test_assignment.py::test5_name_not_found
+          timeout: 2
+          max-score: 1
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          EX1_READ_LINE_RESULTS: "${{ steps.ex1_read_line.outputs.result }}"
+          EX1_USES_READLINE_RESULTS: "${{ steps.ex1_uses_readline.outputs.result }}"
+          EX2_REVERSE_LINES_RESULTS: "${{ steps.ex2_reverse_lines.outputs.result }}"
+          EX2_SOURCE_UNCHANGED_RESULTS: "${{ steps.ex2_source_unchanged.outputs.result }}"
+          EX3_MERGE_FILES_RESULTS: "${{ steps.ex3_merge_files.outputs.result }}"
+          EX3_REPLACES_OLD_DESTINATION_RESULTS: "${{ steps.ex3_replaces_old_destination.outputs.result }}"
+          EX4_FIND_SCORE_RESULTS: "${{ steps.ex4_find_score.outputs.result }}"
+          EX4_NOT_FOUND_RESULTS: "${{ steps.ex4_not_found.outputs.result }}"
+          EX5_UPDATE_SCORE_RESULTS: "${{ steps.ex5_update_score.outputs.result }}"
+          EX5_NAME_NOT_FOUND_RESULTS: "${{ steps.ex5_name_not_found.outputs.result }}"
+        with:
+          runners: ex1_read_line,ex1_uses_readline,ex2_reverse_lines,ex2_source_unchanged,ex3_merge_files,ex3_replaces_old_destination,ex4_find_score,ex4_not_found,ex5_update_score,ex5_name_not_found
